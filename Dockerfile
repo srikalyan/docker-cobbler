@@ -1,6 +1,4 @@
-FROM centos:7.2.1511
-
-MAINTAINER thijs.schnitger@container-solutions.com
+FROM centos:7.3.1611
 
 RUN (cd /lib/systemd/system/sysinit.target.wants/; for i in *; do [ $i == systemd-tmpfiles-setup.service ] || rm -f $i; done); \
 rm -f /lib/systemd/system/multi-user.target.wants/*;\
@@ -13,16 +11,24 @@ rm -f /lib/systemd/system/anaconda.target.wants/*;
 VOLUME [ “/sys/fs/cgroup” ]
 
 RUN yum -y install epel-release
-RUN yum -y install cobbler cobbler-web dhcp bind syslinux pykickstart
+RUN yum -y install file emacs wget bind fence-agents xinetd cobbler cobbler-web dhcp pykickstart
 
-RUN systemctl enable cobblerd httpd dhcpd
+RUN cd /tmp && \
+    wget http://ftp.es.debian.org/debian/pool/main/d/debmirror/debmirror_2.26.tar.xz && \
+    tar xf debmirror* && \
+    cp debmirror/debmirror /usr/bin && \
+    rm -f /tmp/debmirror_2.26.tar.zx && \
+    cd
 
 # enable tftp
-RUN sed -i -e 's/\(^.*disable.*=\) yes/\1 no/' /etc/xinetd.d/tftp
+RUN sed -i '14s/.*/        disable                 = no /' /etc/xinetd.d/tftp
 
 # create rsync file
 RUN touch /etc/xinetd.d/rsync
 
+RUN systemctl enable cobblerd httpd xinetd dhcpd rsyncd
+
+EXPOSE 53
 EXPOSE 69
 EXPOSE 80
 EXPOSE 443
