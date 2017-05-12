@@ -11,7 +11,7 @@ rm -f /lib/systemd/system/anaconda.target.wants/*;
 VOLUME [ “/sys/fs/cgroup” ]
 
 RUN yum -y install epel-release
-RUN yum -y install file emacs wget bind fence-agents xinetd cobbler cobbler-web dhcp pykickstart
+RUN yum -y install file less emacs-nox wget bind fence-agents xinetd cobbler cobbler-web dhcp pykickstart
 
 RUN cd /tmp && \
     wget http://ftp.es.debian.org/debian/pool/main/d/debmirror/debmirror_2.26.tar.xz && \
@@ -25,6 +25,9 @@ RUN sed -i '14s/.*/        disable                 = no /' /etc/xinetd.d/tftp
 
 # create rsync file
 RUN touch /etc/xinetd.d/rsync
+
+COPY trusty-sources.list /var/www/html/trusty-sources.list
+COPY ubuntu-server-14.04-unattended-cobbler.seed /var/lib/cobbler/kickstarts/ubuntu-server-14.04-unattended-cobbler.seed
 
 RUN systemctl enable cobblerd httpd xinetd dhcpd rsyncd
 

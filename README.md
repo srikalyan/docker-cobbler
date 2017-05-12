@@ -37,3 +37,4 @@ Use the accompanied Makefile to set it up. Issue make <target\> to make the foll
 * vbox:   Create a VirtualBox VNIC for listening on and issuing DHCP addresses. This is for testing Cobbler functionality in combination with Virtualbox VMs. Requires a working VirtualBox installation.
 
 
+NOTE1: Don't forget symlinks in pxelinux.cfg and grub in /var/lib/tftpboot/ for images

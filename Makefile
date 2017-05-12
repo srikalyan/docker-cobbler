@@ -10,7 +10,7 @@ run:
 	  -v $(shell pwd)/etc/cobbler/settings:/etc/cobbler/settings \
 	  -v $(shell pwd)/etc/cobbler/dhcp.template:/etc/cobbler/dhcp.template \
 	  -v $(shell pwd)/dist/ubuntu:/mnt:ro \
-	  -v $(shell pwd)/var/www/cobbler/images:/var/www/cobbler \
+	  -v $(shell pwd)/var/www/cobbler/images:/var/www/cobbler/images \
 	  -v $(shell pwd)/var/www/cobbler/ks_mirror:/var/www/cobbler/ks_mirror \
 	  -v $(shell pwd)/var/www/cobbler/links:/var/www/cobbler/links \
 	  -v $(shell pwd)/var/lib/cobbler/config:/var/lib/cobbler/config \
@@ -38,7 +38,10 @@ start:
 	@docker start cobbler
 
 import:
-	@docker exec -it cobbler cobbler import --name=ubuntu_trusty --path=/mnt/
+	@docker exec -it cobbler cobbler import --name=ubuntu_14.04.5 --breed=ubuntu --path=/mnt/
+
+post_run:
+	@docker exec -it cobbler cobbler get-loaders && cobbler signature update && cobbler sync
 
 umount:
 	sudo umount dist/ubuntu

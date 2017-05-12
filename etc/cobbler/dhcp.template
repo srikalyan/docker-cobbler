@@ -19,12 +19,13 @@ set vendorclass = option vendor-class-identifier;
 option pxe-system-type code 93 = unsigned integer 16;
 
 subnet 192.168.0.0 netmask 255.255.255.0 {
-     option routers             192.168.0.100;
-     option domain-name-servers 192.168.0.100;
+     option routers             192.168.0.1;
+     option domain-name-servers , 192.168.0.1;
+     option domain-name         "srikalyan.com";
      option subnet-mask         255.255.255.0;
-     range dynamic-bootp        192.168.0.2 192.168.0.99;
-     default-lease-time         21600;
-     max-lease-time             43200;
+     range dynamic-bootp        192.168.0.2 192.168.0.255;
+     default-lease-time         7200;
+     max-lease-time             7200;
      next-server                $next_server;
      class "pxeclients" {
           match if substring (option vendor-class-identifier, 0, 9) = "PXEClient";
@@ -35,7 +36,7 @@ subnet 192.168.0.0 netmask 255.255.255.0 {
           } else if option pxe-system-type = 00:07 {
                   filename "grub/grub-x86_64.efi";
           } else {
-                  filename "pxelinux.0";
+                  filename "grub/grub-x86_64.efi";
           }
      }
 
@@ -73,7 +74,7 @@ group {
             filename "undionly.kpxe";
         }
         #else
-        filename "$iface.filename";
+        filename "/grub/grub-x86_64.efi";
         #end if
         ## Cobbler defaults to $next_server, but some users
         ## may like to use $iface.system.server for proxied setups
